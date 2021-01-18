@@ -4,7 +4,7 @@ const app = express();
 const server = require("http").Server(app);
 const { v4: uuidV4 } = require("uuid");
 const io = require('socket.io')(server);
-const {ExpressPeerServer} = require('peer');
+const { ExpressPeerServer } = require('peer');
 const peerServer = ExpressPeerServer(server, {
   debug: true
 });
@@ -30,6 +30,10 @@ io.on('connection', socket => {
 
     socket.on('message', message => {
       io.to(roomId).emit('createMessage', message)
+    })
+
+    socket.on('disconnect', () => {
+      socket.to(roomId).broadcast.emit('user-disconnected', userId)
     })
   })
 })
